@@ -1,19 +1,28 @@
 const express = require('express');
 const mongoDB = require('./config/db');
 const dotenv = require('dotenv');
-const registerRoute = require('./router/userRouter')
-
+const cors = require('cors')
+const cookieParser = require('cookie-parser');
+const registerRoute = require('./router/userRouter');
+const loginRouter = require('./router/authRouter');
+const app = express();
 
 dotenv.config()
 
-const app = express();
 app.use(express.json())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
+app.use(cookieParser())
+app.use(express.urlencoded({ extended: false }))
 
 mongoDB()
 
 app.use('/regiter', registerRoute);
+app.use('/login', loginRouter)
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
     console.log(`${PORT} port listining`);
-})
+});

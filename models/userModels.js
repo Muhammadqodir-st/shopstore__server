@@ -38,7 +38,7 @@ function validateUser(user) {
         name: Joi.string().min(3).required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
-        role: Joi.string().required()
+        role: Joi.string().valid('customer', 'vendor', 'admin')
     });
 
     return schema.validate(user);

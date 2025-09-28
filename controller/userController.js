@@ -20,11 +20,9 @@ const signUp = async (req, res) => {
         }
 
         // email tekshiruv
-        let user = await User.findOne({
-            $or: [{ name: req.body.name }, { email: req.body.email }]
-        });
+        let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.json({ success: false, message: 'email or username available' })
+            return res.status(400).json({ success: false, message: 'email available' })
         };
 
         // new user
