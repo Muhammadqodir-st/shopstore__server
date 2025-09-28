@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }))
 
 mongoDB()
 
-app.use('/regiter', registerRoute);
+app.use('/register', registerRoute);
 app.use('/login', loginRouter)
 
 const PORT = process.env.PORT || 8000
