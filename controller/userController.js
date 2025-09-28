@@ -41,7 +41,7 @@ const signUp = async (req, res) => {
         // res
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: "strict"
         }).json({
             success: true,
