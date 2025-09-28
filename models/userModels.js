@@ -3,26 +3,31 @@ const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: {
-        trype: String,
+        type: String,
         minlength: 3,
         required: true
     },
     email: {
-        String,
-        unique: true,
-        required: true
+        type: String,
+        required: true,
+        unique: true
     },
     password: {
-        trype: String,
+        type: String,
         minlength: 8,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ['customer', 'vendor', 'admin'],
+        default: 'customer',
     }
 });
 
 userSchema.methods.generateToken = function () {
-    const token = jwt.sign({ _id: this, _id }, process.env.JWT_PRIVATE_KEY);
+    const token = jwt.sign({ _id: this._id, role: this.role }, process.env.JWT_PRIVATE_KEY);
     return token;
 }
 
@@ -32,7 +37,8 @@ function validateUser(user) {
     const schema = Joi.object({
         name: Joi.string().min(3).required(),
         email: Joi.string().email().required(),
-        password: Joi.string().min(8).required()
+        password: Joi.string().min(8).required(),
+        role: Joi.string().required()
     });
 
     return schema.validate(user);
