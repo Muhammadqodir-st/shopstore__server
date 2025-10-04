@@ -2,10 +2,12 @@ const express = require('express');
 const mongoDB = require('./config/db');
 const dotenv = require('dotenv');
 const cors = require('cors')
+const path = require('path');
 const cookieParser = require('cookie-parser');
 const registerRoute = require('./router/userRouter');
 const loginRouter = require('./router/authRouter');
 const categoryRouter = require('./router/categoryRouter');
+const productRouter = require('./router/productRouter');
 const app = express();
 
 dotenv.config()
@@ -17,12 +19,14 @@ app.use(cors({
 }));
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: false }))
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
 mongoDB()
 
 app.use('/register', registerRoute);
 app.use('/login', loginRouter);
 app.use('/categories', categoryRouter);
+app.use('/products', productRouter);
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
