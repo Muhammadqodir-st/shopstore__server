@@ -42,7 +42,8 @@ const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict"
+            sameSite: "lax",
+            path:'/'
         }).json({
             success: true,
             message: "User registered successfully",
