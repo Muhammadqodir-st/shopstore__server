@@ -77,7 +77,7 @@ const createProduct = async (req, res) => {
             mainImage: images[0]
         });
 
-        res.status(201).json({ success: true, product });
+        res.status(201).json({ success: true, message: 'Product created', product });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message })
     }
@@ -131,7 +131,7 @@ const uploadProduct = async (req, res) => {
             { new: true }
         );
 
-        res.status(201).json({ success: true, product });
+        res.status(201).json({ success: true, message: 'Product created', product });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
