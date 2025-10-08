@@ -23,7 +23,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['customer', 'vendor', 'admin'],
         default: 'customer',
-    }
+    },
+    wishlist: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        }
+    ]
 });
 
 userSchema.methods.generateToken = function () {

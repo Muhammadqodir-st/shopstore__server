@@ -8,6 +8,7 @@ const registerRoute = require('./router/userRouter');
 const loginRouter = require('./router/authRouter');
 const categoryRouter = require('./router/categoryRouter');
 const productRouter = require('./router/productRouter');
+const wishlistRoute = require('./router/wishlistRote');
 const app = express();
 
 dotenv.config()
@@ -27,6 +28,7 @@ app.use('/register', registerRoute);
 app.use('/login', loginRouter);
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
+app.use('/wishlists', wishlistRoute);
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
