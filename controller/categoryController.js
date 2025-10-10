@@ -47,8 +47,12 @@ const createCategory = async (req, res) => {
             return res.json({ success: false, message: 'existing category' });
         };
 
+        const file = req.file ? req.file.path : null
+        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
         category = await Category.create({
-            name: req.body.name
+            name: req.body.name,
+            image: imageUrl
         });
 
 
@@ -68,9 +72,12 @@ const updateCategory = async (req, res) => {
             return res.status(400).json({ success: false, message: error.details[0].message })
         };
 
+        const file = req.file ? req.file.path : null
+        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
         const category = await Category.findByIdAndUpdate(
             req.params.id,
-            { name: req.body.name },
+            { name: req.body.name, image: imageUrl },
             { new: true });
         if (!category) {
             return res.status(404).json({ success: false, message: 'No category found' })

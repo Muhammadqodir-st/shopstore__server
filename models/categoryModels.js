@@ -8,6 +8,10 @@ const categorySchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true
+    },
+    image: {
+        type: String,
+        require: true
     }
 }, { timestamps: true });
 
@@ -15,7 +19,7 @@ const Category = mongoose.model("Category", categorySchema);
 
 function validate(category) {
     const schema = Joi.object({
-        name: Joi.string().min(4).required()
+        name: Joi.string().min(4).required(),
     });
 
     return schema.validate(category);
