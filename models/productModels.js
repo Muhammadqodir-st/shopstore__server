@@ -46,7 +46,7 @@ const productSchema = new mongoose.Schema({
     },
     images: {
         type: [String],
-        validate: [arrayLimit, '{PATH} exceeds the limit of 5']
+        validate: [arrayLimit, '{PATH} exceeds the limit of 3']
     },
     mainImage: {
         type: String,
@@ -55,7 +55,7 @@ const productSchema = new mongoose.Schema({
 });
 
 function arrayLimit(val) {
-    return val.length <= 5;
+    return val.length <= 3;
 };
 
 productSchema.pre("save", function (next) {

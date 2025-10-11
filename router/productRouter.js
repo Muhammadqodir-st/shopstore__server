@@ -7,8 +7,8 @@ const { getAllProduct, getById, createProduct, uploadProduct, deleteProduct } = 
 
 router.get('/', getAllProduct);
 router.get('/:id', getById);
-router.post('/', [auth, admin, upload.array('images', 5)], createProduct);
-router.put('/:id', [auth, admin, upload.array('images', 5)], uploadProduct);
+router.post('/', [auth, admin, upload.array('images', 3)], createProduct);
+router.put('/:id', [auth, admin, upload.array('images', 3)], uploadProduct);
 router.delete('/:id', [auth, admin], deleteProduct);
 
 module.exports = router;

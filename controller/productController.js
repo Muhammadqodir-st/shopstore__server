@@ -61,7 +61,7 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: 'At least one image required' });
         }
 
-        if (images.length > 5) {
+        if (images.length > 3) {
             return res.status(400).json({ success: false, message: 'Maximum 5 images allowed' });
         }
 
@@ -111,7 +111,7 @@ const uploadProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: 'At least one image required' });
         }
 
-        if (images.length > 5) {
+        if (images.length > 3) {
             return res.status(400).json({ success: false, message: 'Maximum 5 images allowed' });
         }
 
