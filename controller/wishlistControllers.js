@@ -4,13 +4,17 @@ const { User } = require('../models/userModels');
 // get all wishlist
 const getAllWishlist = async (req, res) => {
     try {
-        const user = await User.findById(req.params._id).populate('wishlist');
-
-        res.json({ success: true, wishlist: user.wishlist })
+        const user = await User.findById(req.params.id).populate('wishlist');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, wishlist: user.wishlist });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'server error!' });
+        console.log(error);
+        res.status(500).json({ success: false, message: 'Server error!' });
     }
-}
+};
+
 
 // METHOD = POST
 // push wishlist
@@ -31,8 +35,6 @@ const newWishlist = async (req, res) => {
         res.json({ success: true, wishlist: user.wishlist });
     } catch (error) {
         res.status(500).json({ success: false, message: 'server error!' })
-        console.log(error.message);
-
     }
 };
 
