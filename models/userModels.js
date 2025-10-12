@@ -32,14 +32,14 @@ const userSchema = new mongoose.Schema({
     ],
     cart: [
         {
-            product: { type: mongoose.Schema.Types.ObjectId, ref:"Product" },
+            product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
             quantity: { type: Number, default: 1 }
         }
     ]
 });
 
 userSchema.methods.generateToken = function () {
-    const token = jwt.sign({ _id: this._id, name: this.name, email: this.email, role: this.role }, process.env.JWT_PRIVATE_KEY);
+    const token = jwt.sign({ _id: this._id, name: this.name, email: this.email, role: this.role, wishlist: this.wishlist, cart: this.cart }, process.env.JWT_PRIVATE_KEY);
     return token;
 }
 

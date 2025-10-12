@@ -8,7 +8,7 @@ const getAllWishlist = async (req, res) => {
 
         res.json({ success: true, wishlist: user.wishlist })
     } catch (error) {
-        res.status(500).json({ success: false, message: 'server error!' })
+        res.status(500).json({ success: false, message: 'server error!' });
     }
 }
 
@@ -17,7 +17,7 @@ const getAllWishlist = async (req, res) => {
 const newWishlist = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
-        const productId = req.params.productId;
+        const { productId } = req.body;
 
         if (!user) {
             return res.json({ success: false, message: 'User not found' })
@@ -31,6 +31,8 @@ const newWishlist = async (req, res) => {
         res.json({ success: true, wishlist: user.wishlist });
     } catch (error) {
         res.status(500).json({ success: false, message: 'server error!' })
+        console.log(error.message);
+
     }
 };
 
@@ -39,15 +41,24 @@ const newWishlist = async (req, res) => {
 // delete wishlist
 const deleteWishlist = async (req, res) => {
     try {
-        const user = await User.findById(req.params._id);
-        const productId = req.params.productId;
+        const { userId, productId } = req.body;
+        const user = await User.findById(userId);
 
-        user.wishlist = user.wishlist.filter(id => id.toString() !== productId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        user.wishlist = user.wishlist.filter(
+            (id) => id.toString() !== productId.toString()
+        );
+
         await user.save();
 
         res.json({ success: true, wishlist: user.wishlist });
     } catch (error) {
         res.json({ success: false, message: 'server error!' })
+        console.log(error);
+
     }
 };
 

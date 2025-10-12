@@ -43,7 +43,7 @@ const signUp = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
-            path:'/'
+            path: '/'
         }).json({
             success: true,
             message: "User registered successfully",
@@ -55,4 +55,15 @@ const signUp = async (req, res) => {
     }
 }
 
-module.exports = { getUser, signUp }
+
+// get one user
+const getOne = async (req, res) => {
+    try {
+        const user = await User.findById(req.params._id)
+
+        res.json({ success: true, user: user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'server error' })
+    }
+}
+module.exports = { getUser, signUp, getOne }
