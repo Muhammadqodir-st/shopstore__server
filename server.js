@@ -30,7 +30,7 @@ app.use('/login', loginRouter);
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
 app.use('/wishlists', wishlistRoute);
-app.use('/cart', cartRoute);
+app.use('/carts', cartRoute);
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {

@@ -59,7 +59,7 @@ const signUp = async (req, res) => {
 // get one user
 const getOne = async (req, res) => {
     try {
-        const user = await User.findById(req.params._id)
+        const user = await User.findById(req.params._id);
 
         res.json({ success: true, user: user });
     } catch (error) {

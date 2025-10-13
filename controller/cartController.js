@@ -19,20 +19,20 @@ const getAllCarts = async (req, res) => {
 // new cart
 const newCart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body
-        const user = await User.findById(req.params._id)
+        const { productId, quantity, userId } = req.body
+        const user = await User.findById(userId);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
 
-        const exetingItem = user.cart.find(item => item.product.toString() === productId)
+        const exetingItem = user.cart.find(item => item.product.toString() === productId.toString());
 
         if (exetingItem) {
             exetingItem.quantity += quantity;
-        } else (
+        } else {
             user.cart.push({ product: productId, quantity })
-        );
+        };
 
         await user.save();
 
