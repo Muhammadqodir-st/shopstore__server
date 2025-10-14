@@ -47,12 +47,13 @@ const newCart = async (req, res) => {
 // remove cart
 const deleteCart = async (req, res) => {
     try {
-        const user = await User.findById(req.params._id)
+        const user = await User.findById(req.user._id);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
 
         const { productId } = req.params
+
 
         user.cart = user.cart.filter(item => item.product.toString() !== productId)
 
