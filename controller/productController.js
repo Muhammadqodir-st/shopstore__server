@@ -11,7 +11,7 @@ const getAllProduct = async (req, res) => {
 
         if (category) {
             filter.category = category
-        } else{
+        } else {
 
         }
 
@@ -147,6 +147,7 @@ const uploadProduct = async (req, res) => {
     }
 };
 
+
 // METHOD = DELETE
 // product delete by id
 const deleteProduct = async (req, res) => {
@@ -161,5 +162,25 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 }
+
+
+// METHOD = PUT
+// product one update
+// const uploadProduct = async (req, res) => {
+//     try {
+//         const { productId, quantity } = req.body;
+
+//         console.log(productId);
+
+
+//         const updateProduct = await Product.findByIdAndUpdate(productId, {
+//             quantity: req.body.quantity
+//         }, { new: true });
+
+//         res.json({ success: true, product: updateProduct })
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message })
+//     }
+// }
 
 module.exports = { getAllProduct, getById, createProduct, uploadProduct, deleteProduct };

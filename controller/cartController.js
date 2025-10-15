@@ -27,9 +27,7 @@ const newCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
 
-        const exetingItem = user.cart.find(item => item.product.toString() === productId.toString());
-
-
+        const exetingItem = user.cart.find(item => item.product === productId);
 
         if (exetingItem) {
             user.cart.quantity += quantity;
@@ -89,7 +87,6 @@ const updateCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Product not found in cart' });
         }
 
-        console.log(cartItem);
         
 
         // cartItem.quantity = quantity;
