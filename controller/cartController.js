@@ -16,10 +16,11 @@ const getAllCarts = async (req, res) => {
 
 
 // METHOD = POST
-// new cart
+// add to cart
 const newCart = async (req, res) => {
     try {
-        const { productId, quantity, userId } = req.body
+        const { productId } = req.body
+        const userId = req.user._id;
         const user = await User.findById(userId);
 
         if (!user) {
@@ -28,17 +29,21 @@ const newCart = async (req, res) => {
 
         const exetingItem = user.cart.find(item => item.product.toString() === productId.toString());
 
+
+
         if (exetingItem) {
-            exetingItem.quantity += quantity;
+            user.cart.quantity += quantity;
         } else {
-            user.cart.push({ product: productId, quantity })
+            user.cart.push({ product: productId });
         };
 
         await user.save();
 
         res.json({ success: true, message: 'Product added to cart', cart: user.cart });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
+        console.log(error);
+
     }
 };
 
@@ -71,24 +76,27 @@ const deleteCart = async (req, res) => {
 // update one cart item
 const updateCart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
+        const { productId } = req.body;
         const user = await User.findById(req.user._id);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const cartItem = user.cart.find(item => item.product.toString() === productId.toString());
+        const cartItem = user.cart.find(item => item === productId);
 
         if (!cartItem) {
             return res.status(404).json({ success: false, message: 'Product not found in cart' });
         }
 
-        cartItem.quantity = quantity;
+        console.log(cartItem);
+        
 
-        await user.save();
+        // cartItem.quantity = quantity;
 
-        res.json({ success: true, message: 'Cart updated successfully', cart: user.cart });
+        // await user.save();
+
+        // res.json({ success: true, message: 'Cart updated successfully', cart: user.cart });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
