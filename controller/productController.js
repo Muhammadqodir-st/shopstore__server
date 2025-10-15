@@ -5,7 +5,17 @@ const { Category } = require('../models/categoryModels');
 // get all product
 const getAllProduct = async (req, res) => {
     try {
-        const products = await Product.find()
+        const { category } = req.query
+
+        let filter = {};
+
+        if (category) {
+            filter.category = category
+        } else{
+
+        }
+
+        const products = await Product.find(filter)
             .populate("category", "name")
             .populate("createdBy", "name email role")
 
