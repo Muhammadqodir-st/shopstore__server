@@ -5,7 +5,9 @@ const bcrypt = require('bcrypt');
 
 // get user 
 const getUser = async (req, res) => {
-    const user = await User.findById(req.user._id).select('-password').populate('cart.product')
+    const user = await User.findById(req.user._id).select('-password')
+    .populate('cart.product')
+    .populate('wishlist')
 
     res.json({ success: true, user });
 }
