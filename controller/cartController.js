@@ -79,7 +79,7 @@ const updateCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const cartItem = user.cart.find(item => item.toString() === productId.toString());
+        const cartItem = user.cart.find(item => item.product.toString() === productId.toString());
 
         if (!cartItem) {
             return res.status(404).json({ success: false, message: 'Product not found in cart' });
@@ -89,7 +89,11 @@ const updateCart = async (req, res) => {
 
         await user.save();
 
-        res.json({ success: true, message: 'Cart updated successfully', cart: user.cart });
+        
+        const cart = await User.findById(req.user._id).populate('cart.product');
+        
+
+        res.json({ success: true, message: 'Cart updated successfully', user: cart });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
