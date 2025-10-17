@@ -31,8 +31,8 @@ const login = async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "lax",
-        path:'/'
-    }).json({ success: true, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role']) })
+        path: '/'
+    }).json({ success: true, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role', 'wishlist', 'cart', 'order']) })
 }
 
 function validate(user) {

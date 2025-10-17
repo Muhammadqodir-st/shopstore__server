@@ -35,11 +35,30 @@ const userSchema = new mongoose.Schema({
             product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
             quantity: { type: Number, default: 1 }
         }
+    ],
+    order: [
+        {
+            products: [
+                {
+                    product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+                    quantity: { type: Number, default: 1 }
+                }
+            ],
+            firstName: { type: String, required: true },
+            lastName: { type: String, required: true },
+            state: { type: String, required: true },
+            city: { type: String, required: true },
+            street: { type: String, required: true },
+            phone: { type: String, required: true },
+            email: { type: String, required: true },
+            deliveryDays: { type: Number, default: 2 },
+            totalPrice: { type: Number, required: true }
+        }
     ]
 });
 
 userSchema.methods.generateToken = function () {
-    const token = jwt.sign({ _id: this._id, name: this.name, email: this.email, role: this.role, wishlist: this.wishlist, cart: this.cart }, process.env.JWT_PRIVATE_KEY);
+    const token = jwt.sign({ _id: this._id, name: this.name, email: this.email, role: this.role, wishlist: this.wishlist, cart: this.cart, orders: this.orders }, process.env.JWT_PRIVATE_KEY);
     return token;
 }
 

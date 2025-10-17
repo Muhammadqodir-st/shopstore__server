@@ -8,6 +8,7 @@ const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password')
     .populate('cart.product')
     .populate('wishlist')
+    .populate('order.products.product')
 
     res.json({ success: true, user });
 }
@@ -69,4 +70,4 @@ const getOne = async (req, res) => {
         res.status(500).json({ success: false, message: 'server error' })
     }
 }
-module.exports = { getUser, signUp, getOne }
+module.exports = { getUser, signUp, getOne };

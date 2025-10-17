@@ -53,14 +53,17 @@ const deleteCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
 
-        const { productId } = req.body
+        let { productId } = req.body;
 
+        if (!Array.isArray(productId)) {
+            productId = [productId];
+        }
 
-        user.cart = user.cart.filter(item => item.product.toString() !== productId)
+        user.cart = user.cart.filter(item => !productId.includes(item.product.toString()));
 
         await user.save();
 
-        res.json({ success: true, message: 'Product removed from cart', cart: user.cart })
+        res.json({ success: true, message: 'Products removed from cart', cart: user.cart });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message })
     }
@@ -89,9 +92,9 @@ const updateCart = async (req, res) => {
 
         await user.save();
 
-        
+
         const cart = await User.findById(req.user._id).populate('cart.product');
-        
+
 
         res.json({ success: true, message: 'Cart updated successfully', user: cart });
     } catch (error) {
