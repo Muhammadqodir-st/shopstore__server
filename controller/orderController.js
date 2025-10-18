@@ -16,15 +16,13 @@ const getAllorder = async (req, res) => {
 // push new orders
 const createOrders = async (req, res) => {
     try {
-        const { firstName, lastName, state, city, street, phone, email, orders, totalPrice } = req.body
+        const { firstName, lastName, state, city, street, phone, email, orders, totalPrice, deliveryDays } = req.body
 
-        if (!firstName || !lastName || !state || !city || !street || !phone || !email || !orders || !totalPrice) {
+        if (!firstName || !lastName || !state || !city || !street || !phone || !email || !orders || !totalPrice || !deliveryDays) {
             return res.status(400).json({ success: false, message: 'All required fields must be provided' })
         };
 
         const user = await User.findById(req.user._id).populate('order');
-
-        const deliveryDays = 2;
 
         user.order.push({ firstName, lastName, state, city, street, phone, email, products: orders, deliveryDays, totalPrice });
 
