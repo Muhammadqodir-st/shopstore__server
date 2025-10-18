@@ -6,9 +6,9 @@ const bcrypt = require('bcrypt');
 // get user 
 const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password')
-    .populate('cart.product')
-    .populate('wishlist')
-    .populate('order.products.product')
+        .populate('cart.product')
+        .populate('wishlist')
+        .populate('order.products.product')
 
     res.json({ success: true, user });
 }
@@ -60,14 +60,22 @@ const signUp = async (req, res) => {
 }
 
 
-// get one user
-const getOne = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
 
-        res.json({ success: true, user: user });
+// log out
+const logOut = async (req, res) => {
+    try {
+        res.cookie('token', '', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sampleSize: 'strict',
+            expires: new Date(0),
+            path: '/'
+        });
+        res.json({ success: true, message: 'Logged out successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: 'server error' })
     }
 }
-module.exports = { getUser, signUp, getOne };
+
+
+module.exports = { getUser, signUp, logOut };
