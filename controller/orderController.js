@@ -1,4 +1,4 @@
-const { User } = require('../models/userModels')
+const { User } = require('../models/userModels');
 
 // METHOD = GET
 // get all order
@@ -10,7 +10,7 @@ const getAllorder = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: error.message })
     }
-};
+}
 
 // METHOD = POST
 // push new orders

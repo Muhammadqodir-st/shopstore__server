@@ -23,6 +23,6 @@ function validate(category) {
     });
 
     return schema.validate(category);
-}
+};
 
 module.exports = { Category, validate };

@@ -8,4 +8,4 @@ router.post('/', auth, newCart);
 router.put('/', auth, updateCart);
 router.delete('/', auth, deleteCart);
 
-module.exports = router;
+module.exports = router; 

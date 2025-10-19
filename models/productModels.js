@@ -65,7 +65,7 @@ productSchema.pre("save", function (next) {
         this.discountedPrice = this.price
     }
     next();
-});
+}); 
 
 const Product = mongoose.model("Product", productSchema);
 

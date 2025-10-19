@@ -1,7 +1,6 @@
 const { User, validate } = require('../models/userModels');
-const _ = require('lodash')
+const _ = require('lodash');
 const bcrypt = require('bcrypt');
-
 
 // get user 
 const getUser = async (req, res) => {
@@ -60,7 +59,6 @@ const signUp = async (req, res) => {
 }
 
 
-
 // log out
 const logOut = async (req, res) => {
     try {
@@ -75,7 +73,6 @@ const logOut = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: 'server error' })
     }
-}
-
+};
 
 module.exports = { getUser, signUp, logOut };

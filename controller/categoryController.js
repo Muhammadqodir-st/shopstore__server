@@ -32,7 +32,6 @@ const getCategoryById = async (req, res) => {
 };
 
 
-
 // METHOD = POST
 // create category
 const createCategory = async (req, res) => {
@@ -61,7 +60,6 @@ const createCategory = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-
 
 // METHOD = PUT
 // update by id category

@@ -7,4 +7,4 @@ module.exports = function admin(req, res, next) {
     };
 
     next();
-}
+};

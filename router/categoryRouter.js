@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const admin = require('../middleware/adminMiddleware');
 const upload = require('../middleware/uploadMiddleware');
-const { getAllCategory, getCategoryById, createCategory, updateCategory, deleteCategory } = require('../controller/categoryController')
+const { getAllCategory, getCategoryById, createCategory, updateCategory, deleteCategory } = require('../controller/categoryController');
 
 router.get('/', getAllCategory);
 router.get('/:id', getCategoryById);

@@ -1,4 +1,4 @@
-const { User } = require('../models/userModels')
+const { User } = require('../models/userModels');
 const Product = require('../models/productModels');
 
 // METHOD = GET
@@ -12,7 +12,6 @@ const getAllCarts = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 };
-
 
 
 // METHOD = POST
@@ -68,7 +67,6 @@ const deleteCart = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 };
-
 
 
 // METHOD = PUT

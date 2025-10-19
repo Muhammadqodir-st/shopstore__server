@@ -14,7 +14,7 @@ module.exports = function auth(req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.user = decoded;
-        next()
+        next();
     } catch (error) {
         res.status(401).json({ success: false, message: 'invalid token' })
     }

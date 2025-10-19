@@ -24,7 +24,7 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: false }))
 app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
-mongoDB()
+mongoDB();
 
 app.use('/register', registerRoute);
 app.use('/login', loginRouter);

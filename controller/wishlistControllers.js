@@ -15,7 +15,6 @@ const getAllWishlist = async (req, res) => {
     }
 };
 
-
 // METHOD = POST
 // push wishlist
 const newWishlist = async (req, res) => {

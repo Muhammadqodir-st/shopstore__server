@@ -1,7 +1,7 @@
-const { User } = require('../models/userModels')
+const { User } = require('../models/userModels');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const Joi = require('joi')
+const Joi = require('joi');
 
 // login
 const login = async (req, res) => {
@@ -44,4 +44,4 @@ function validate(user) {
     return schema.validate(user);
 }
 
-module.exports = { login }
+module.exports = { login };

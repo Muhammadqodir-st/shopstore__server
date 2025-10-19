@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -60,7 +59,7 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.generateToken = function () {
     const token = jwt.sign({ _id: this._id, name: this.name, email: this.email, role: this.role, wishlist: this.wishlist, cart: this.cart, orders: this.orders }, process.env.JWT_PRIVATE_KEY);
     return token;
-}
+};
 
 const User = mongoose.model('User', userSchema);
 
@@ -73,7 +72,7 @@ function validateUser(user) {
     });
 
     return schema.validate(user);
-}
+};
 
 exports.User = User;
 exports.validate = validateUser;
