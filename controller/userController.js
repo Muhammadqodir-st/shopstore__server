@@ -45,7 +45,7 @@ const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "None",
+            sameSite: "none",
             path: '/'
         }).json({
             success: true,
@@ -65,7 +65,7 @@ const logOut = async (req, res) => {
         res.cookie('token', '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sampleSize: 'None',
+            sampleSize: 'none',
             expires: new Date(0),
             path: '/'
         });
