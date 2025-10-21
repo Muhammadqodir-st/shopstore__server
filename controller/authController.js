@@ -30,7 +30,7 @@ const login = async (req, res) => {
     res.cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "None",
         path: '/'
     }).json({ success: true, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role', 'wishlist', 'cart', 'order']) })
 }
