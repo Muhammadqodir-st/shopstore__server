@@ -14,13 +14,13 @@ const login = async (req, res) => {
     // email tekshiruv
     let user = await User.findOne({ email: req.body.email });
     if (!user) {
-        return res.status(400).json({ success: false, message: 'Incorrect email or password' })
+        return res.status(400).json({ success: false, message: 'Account not found. Please register first' })
     };
 
     // password tekshiruv
     const isValidate = await bcrypt.compare(req.body.password, user.password);
     if (!isValidate) {
-        return res.status(400).json({ success: false, message: 'Incorrect email or password' })
+        return res.status(400).json({ success: false, message: 'Incorrect  password' })
     };
 
     // create token 
