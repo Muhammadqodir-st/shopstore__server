@@ -1,4 +1,9 @@
+const { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
+const { s3Client, bucketName } = require('../config/awsConfig')
 const { Category, validate } = require('../models/categoryModels');
+const { v4: uuidv4 } = require('uuid');
+
+
 
 // METHOD = GET
 // get all category
@@ -46,8 +51,23 @@ const createCategory = async (req, res) => {
             return res.json({ success: false, message: 'existing category' });
         };
 
-        const file = req.file ? req.file.path : null
-        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'Image is required' });
+        }
+
+        const key = `categories/${Date.now()}-${uuidv4()}-${req.file.originalname.replace(/\s+/g, "_")}`;
+
+        const uploadParams = {
+            Bucket: bucketName,
+            Key: key,
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype
+        }
+
+        await s3Client.send(new PutObjectCommand(uploadParams));
+
+        const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
 
         category = await Category.create({
             name: req.body.name,
@@ -70,8 +90,22 @@ const updateCategory = async (req, res) => {
             return res.status(400).json({ success: false, message: error.details[0].message })
         };
 
-        const file = req.file ? req.file.path : null
-        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        let imageUrl = category.image;
+
+        if (req.file) {
+            const key = `categories/${Date.now()}-${uuidv4()}-${req.file.originalname.replace(/\s+/g, "_")}`;
+            const uploadParams = {
+                Bucket: bucketName,
+                Key: key,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype,
+                ACL: 'public-read'
+            };
+
+            await s3Client.send(new PutObjectCommand(uploadParams));
+            imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        }
+
 
         const category = await Category.findByIdAndUpdate(
             req.params.id,
@@ -91,9 +125,18 @@ const updateCategory = async (req, res) => {
 // update by id category
 const deleteCategory = async (req, res) => {
     try {
-        const category = await Category.findByIdAndDelete(req.params.id);
+        const category = await Category.findById(req.params.id);
+        if (!category) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
 
-        res.json({ success: true, category });
+        // S3 dan o‘chirish
+        const key = category.image.split('.com/')[1]; // URLdan key ajratish
+        await s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
+
+        await category.deleteOne();
+
+        res.json({ success: true, message: 'Category deleted' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
