@@ -42,7 +42,7 @@ const signUp = async (req, res) => {
         const token = user.generateToken();
 
         // res
-        resjson({
+        res.json({
             success: true,
             token,
             message: "User registered successfully",

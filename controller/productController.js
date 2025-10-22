@@ -1,27 +1,26 @@
+const { PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { s3Client, bucketName } = require('../config/awsConfig');
+const { v4: uuidv4 } = require('uuid');
 const Product = require('../models/productModels');
 const { Category } = require('../models/categoryModels');
+
 
 // METHOD = GET
 // get all product
 const getAllProduct = async (req, res) => {
     try {
-        const { category } = req.query
-
+        const { category } = req.query;
         let filter = {};
 
-        if (category) {
-            filter.category = category
-        } else {
-
-        }
+        if (category) filter.category = category;
 
         const products = await Product.find(filter)
-            .populate("category", "name")
-            .populate("createdBy", "name email role")
+            .populate('category', 'name')
+            .populate('createdBy', 'name email role');
 
-        res.json({ success: true, products })
+        res.json({ success: true, products });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -30,16 +29,14 @@ const getAllProduct = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
-            .populate("category", "name")
-            .populate("createdBy", "name email role")
+            .populate('category', 'name')
+            .populate('createdBy', 'name email role');
 
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'No product found' })
-        }
+        if (!product) return res.status(404).json({ success: false, message: 'No product found' });
 
         res.json({ success: true, product });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -47,32 +44,40 @@ const getById = async (req, res) => {
 // get all product
 const createProduct = async (req, res) => {
     try {
-        const { title, description, price, discountPercent, stock, category } = req.body
+        const { title, description, price, discountPercent, stock, category } = req.body;
 
-        if (!title || !description || !price || !stock || !category) {
-            return res.status(400).json({ success: false, message: 'All required fields must be provided' })
-        }
+        if (!title || !description || !price || !stock || !category)
+            return res.status(400).json({ success: false, message: 'All required fields must be provided' });
 
-        if (price < 0 || stock < 0) {
-            return res.status(400).json({ success: false, message: 'Price and stock must be non-negative' })
-        }
+        if (price < 0 || stock < 0)
+            return res.status(400).json({ success: false, message: 'Price and stock must be non-negative' });
 
-        if (discountPercent && (discountPercent < 0 || discountPercent > 100)) {
-            return res.status(400).json({ success: false, message: 'Discount must be between 0 and 100' })
-        }
+        if (discountPercent && (discountPercent < 0 || discountPercent > 100))
+            return res.status(400).json({ success: false, message: 'Discount must be between 0 and 100' });
 
         const isCategory = await Category.findById(category);
-        if (!isCategory) {
-            return res.status(400).json({ success: false, message: 'Invalid category ID' })
-        };
+        if (!isCategory)
+            return res.status(400).json({ success: false, message: 'Invalid category ID' });
 
-        const images = req.files ? req.files.map(file => file.filename) : [];
-        if (images.length === 0) {
+        if (!req.files || req.files.length === 0)
             return res.status(400).json({ success: false, message: 'At least one image required' });
-        }
 
-        if (images.length > 3) {
+        if (req.files.length > 5)
             return res.status(400).json({ success: false, message: 'Maximum 5 images allowed' });
+
+        // 🔹 AWS upload
+        const imageUrls = [];
+        for (const file of req.files) {
+            const fileName = `${uuidv4()}.webp`;
+            const uploadParams = {
+                Bucket: bucketName,
+                Key: fileName,
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            };
+            await s3Client.send(new PutObjectCommand(uploadParams));
+            const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+            imageUrls.push(imageUrl);
         }
 
         const product = await Product.create({
@@ -83,13 +88,13 @@ const createProduct = async (req, res) => {
             discountPercent,
             category,
             createdBy: req.user._id,
-            images,
-            mainImage: images[0]
+            images: imageUrls,
+            mainImage: imageUrls[0],
         });
 
         res.status(201).json({ success: true, message: 'Product created', product });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -97,35 +102,44 @@ const createProduct = async (req, res) => {
 // product update by id
 const uploadProduct = async (req, res) => {
     try {
-        const { title, description, price, discountPercent, stock, category } = req.body
+        const { title, description, price, discountPercent, stock, category } = req.body;
 
-        if (!title || !description || !price || !stock || !category) {
-            return res.status(400).json({ success: false, message: 'All required fields must be provided' })
-        }
-
-        if (price < 0 || stock < 0) {
-            return res.status(400).json({ success: false, message: 'Price and stock must be non-negative' })
-        }
-
-        if (discountPercent && (discountPercent < 0 || discountPercent > 100)) {
-            return res.status(400).json({ success: false, message: 'Discount must be between 0 and 100' })
-        }
+        if (!title || !description || !price || !stock || !category)
+            return res.status(400).json({ success: false, message: 'All required fields must be provided' });
 
         const isCategory = await Category.findById(category);
-        if (!isCategory) {
-            return res.status(400).json({ success: false, message: 'Invalid category ID' })
-        };
+        if (!isCategory)
+            return res.status(400).json({ success: false, message: 'Invalid category ID' });
 
-        const images = req.files ? req.files.map(file => file.filename) : [];
-        if (images.length === 0) {
-            return res.status(400).json({ success: false, message: 'At least one image required' });
+        const product = await Product.findById(req.params.id);
+        if (!product)
+            return res.status(404).json({ success: false, message: 'No product found' });
+
+        let imageUrls = product.images;
+
+        if (req.files && req.files.length > 0) {
+            // eski rasmlarni o‘chirish
+            for (const imageUrl of product.images) {
+                const key = imageUrl.split('.com/')[1];
+                await s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
+            }
+
+            imageUrls = [];
+            for (const file of req.files) {
+                const fileName = `${uuidv4()}.webp`;
+                const uploadParams = {
+                    Bucket: bucketName,
+                    Key: fileName,
+                    Body: file.buffer,
+                    ContentType: file.mimetype,
+                };
+                await s3Client.send(new PutObjectCommand(uploadParams));
+                const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+                imageUrls.push(imageUrl);
+            }
         }
 
-        if (images.length > 3) {
-            return res.status(400).json({ success: false, message: 'Maximum 5 images allowed' });
-        }
-
-        const product = await Product.findByIdAndUpdate(
+        const updated = await Product.findByIdAndUpdate(
             req.params.id,
             {
                 title,
@@ -135,13 +149,13 @@ const uploadProduct = async (req, res) => {
                 discountPercent,
                 category,
                 createdBy: req.user._id,
-                images,
-                mainImage: images[0]
+                images: imageUrls,
+                mainImage: imageUrls[0],
             },
             { new: true }
         );
 
-        res.status(201).json({ success: true, message: 'Product created', product });
+        res.json({ success: true, message: 'Product updated', product: updated });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -151,14 +165,20 @@ const uploadProduct = async (req, res) => {
 // product delete by id
 const deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findByIdAndDelete(req.params.id);
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'No product found' })
+        const product = await Product.findById(req.params.id);
+        if (!product)
+            return res.status(404).json({ success: false, message: 'No product found' });
+
+        for (const imageUrl of product.images) {
+            const key = imageUrl.split('.com/')[1];
+            await s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
         }
 
-        res.status(201).json({ success: true, product })
+        await product.deleteOne();
+
+        res.json({ success: true, message: 'Product deleted' });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 
