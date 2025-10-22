@@ -42,14 +42,9 @@ const signUp = async (req, res) => {
         const token = user.generateToken();
 
         // res
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            partitioned: true,
-            path: '/'
-        }).json({
+        resjson({
             success: true,
+            token,
             message: "User registered successfully",
             user: _.pick(user, ['_id', 'name', 'email', 'role'])
         })
@@ -63,13 +58,6 @@ const signUp = async (req, res) => {
 // log out
 const logOut = async (req, res) => {
     try {
-        res.cookie('token', '', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sampleSize: 'none',
-            expires: new Date(0),
-            path: '/'
-        });
         res.json({ success: true, message: 'Logged out successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: 'server error' })

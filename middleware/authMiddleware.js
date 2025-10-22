@@ -1,21 +1,18 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = function auth(req, res, next) {
-    // token tekshiruvi
-    const token = req.cookies.token
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: 'The application was rejected due to lack of a token'
-        })
-    };
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    // ... tekshiruv
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Access denied: no token provided' });
+    }
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.user = decoded;
         next();
     } catch (error) {
-        res.status(401).json({ success: false, message: 'invalid token' })
+        res.status(401).json({ success: false, message: 'Invalid token' });
     }
 };

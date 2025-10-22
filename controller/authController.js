@@ -27,13 +27,7 @@ const login = async (req, res) => {
     const token = user.generateToken();
 
     // res
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-        path: '/'
-    }).json({ success: true, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role', 'wishlist', 'cart', 'order']) })
+    res.json({ success: true, token, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role', 'wishlist', 'cart', 'order']) })
 }
 
 function validate(user) {
