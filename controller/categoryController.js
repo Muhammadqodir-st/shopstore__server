@@ -43,38 +43,41 @@ const createCategory = async (req, res) => {
     try {
         const { error } = validate(req.body);
         if (error) {
-            return res.status(400).json({ success: false, message: error.details[0].message })
-        };
+            return res.status(400).json({ success: false, message: error.details[0].message });
+        }
 
-        let category = await Category.findOne({ name: req.body.name });
+        const name = req.body.name.trim().toLowerCase();
+        let category = await Category.findOne({ name });
         if (category) {
-            return res.json({ success: false, message: 'existing category' });
-        };
+            return res.status(409).json({ success: false, message: 'Category already exists' });
+        }
 
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'Image is required' });
         }
 
-        const key = `categories/${Date.now()}-${uuidv4()}-${req.file.originalname.replace(/\s+/g, "_")}`;
+        const fileName = `${uuidv4()}.webp`;
 
         const uploadParams = {
             Bucket: bucketName,
-            Key: key,
+            Key: fileName,
             Body: req.file.buffer,
             ContentType: req.file.mimetype,
-            ACL: 'public-read'
+        };
+
+        try {
+            await s3Client.send(new PutObjectCommand(uploadParams));
+        } catch (err) {
+            return res.status(500).json({ success: false, message: 'Failed to upload image to S3' });
         }
 
-        await s3Client.send(new PutObjectCommand(uploadParams));
 
-        const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
+        const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
         category = await Category.create({
-            name: req.body.name,
-            image: imageUrl
+            name,
+            image: imageUrl,
         });
-
 
         res.status(201).json({ success: true, category });
     } catch (error) {
@@ -91,21 +94,23 @@ const updateCategory = async (req, res) => {
             return res.status(400).json({ success: false, message: error.details[0].message })
         };
 
-        let imageUrl = category.image;
+        const fileName = `${uuidv4()}.webp`;
 
-        if (req.file) {
-            const key = `categories/${Date.now()}-${uuidv4()}-${req.file.originalname.replace(/\s+/g, "_")}`;
-            const uploadParams = {
-                Bucket: bucketName,
-                Key: key,
-                Body: req.file.buffer,
-                ContentType: req.file.mimetype,
-                ACL: 'public-read'
-            };
+        const uploadParams = {
+            Bucket: bucketName,
+            Key: fileName,
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype,
+        };
 
+        try {
             await s3Client.send(new PutObjectCommand(uploadParams));
-            imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        } catch (err) {
+            return res.status(500).json({ success: false, message: 'Failed to upload image to S3' });
         }
+
+
+        const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
 
         const category = await Category.findByIdAndUpdate(
@@ -131,8 +136,7 @@ const deleteCategory = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Category not found' });
         }
 
-        // S3 dan o‘chirish
-        const key = category.image.split('.com/')[1]; // URLdan key ajratish
+        const key = category.image.split('.com/')[1]; 
         await s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
 
         await category.deleteOne();

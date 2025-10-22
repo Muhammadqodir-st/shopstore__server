@@ -5,10 +5,10 @@ const REGION = process.env.AWS_REGION
 if (!REGION) throw new Error('AWS_REGION not defined in .env');
 
 const s3Client = new S3Client({
-    REGION: REGION,
-    Credentials: {
+    region: REGION,
+    credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 });
 
