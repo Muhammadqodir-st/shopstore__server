@@ -45,7 +45,8 @@ const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
+            sameSite: "None",
+            partitioned: true,
             path: '/'
         }).json({
             success: true,

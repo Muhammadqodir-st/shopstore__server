@@ -29,8 +29,9 @@ const login = async (req, res) => {
     // res
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true, 
-        sameSite: "none",
+        secure: true,
+        sameSite: "None",
+        partitioned: true,
         path: '/'
     }).json({ success: true, message: 'Login successful', user: _.pick(user, ['_id', 'name', 'email', 'role', 'wishlist', 'cart', 'order']) })
 }
