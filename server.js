@@ -17,7 +17,7 @@ dotenv.config()
 
 app.use(express.json())
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://shopstore-client.vercel.app'],
+    origin: ['http://localhost:3000', 'https://shopstore-com.vercel.app/'],
     credentials: true
 }))
 app.use(cookieParser())
